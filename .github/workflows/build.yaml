@@ -33,18 +33,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
+      - id: set-var
+        uses: ASzc/change-string-case-action@v5
+        with:
+          string: ${{ github.repository }}
+
       - name: Build and Push Image to ghcr.io
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: ghcr.io/${{ github.repository }}:test
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:test
+          tags: ghcr.io/${{ steps.set-var.outputs.lowercase }}:test
+          cache-from: type=registry,ref=ghcr.io/${{ steps.set-var.outputs.lowercase }}:test
           cache-to: type=inline # Inline cache is stored in the registry, embedded into the main image, and is pulled alongside the main image.
-          target: build # This is the target stage in the Dockerfile
+          target: prerelease # This is the target stage in the Dockerfile
           labels: |
             org.opencontainers.image.title=Test Image
             org.opencontainers.image.description=Image used for testing
-            org.opencontainers.image.source=ghcr.io/${{ github.repository }}
+            org.opencontainers.image.source=ghcr.io/${{ steps.set-var.outputs.lowercase }}
 
   # We are going to run unit tests, integration tests, CVE scanning, smoke tests, and linting in parallel
   lint:
@@ -63,8 +68,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
+      - id: set-var
+        uses: ASzc/change-string-case-action@v5
+        with:
+          string: ${{ github.repository }}
+
       - name: Run Linting
-        run: docker run --rm ghcr.io/${{ github.repository }}:test bun run lint:eslint
+        run: docker run --rm ghcr.io/${{ steps.set-var.outputs.lowercase }}:test bun run lint:eslint
 
   format:
     name: Prettier Format
@@ -82,8 +92,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
+      - id: set-var
+        uses: ASzc/change-string-case-action@v5
+        with:
+          string: ${{ github.repository }}
+
       - name: Run Linting
-        run: docker run --rm ghcr.io/${{ github.repository }}:test bun run lint:format
+        run: docker run --rm ghcr.io/${{ steps.set-var.outputs.lowercase }}:test bun run lint:format
 
   spelling:
     name: Lint Spelling
@@ -101,14 +116,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
+      - id: set-var
+        uses: ASzc/change-string-case-action@v5
+        with:
+          string: ${{ github.repository }}
+
       - name: Run Linting
-        run: docker run --rm ghcr.io/${{ github.repository }}:test bun run lint:spelling
+        run: docker run --rm ghcr.io/${{ steps.set-var.outputs.lowercase }}:test bun run lint:spelling
 
   # We are going to build an image specifically for final deployment and push it to ghcr.io (GitHub Container Registry)
   build-final-image:
     name: Build Image for Deployment (Production)
     runs-on: ubuntu-latest
-    needs: [lint, format, spelling]
+    # TODO add lint as a need when bun fixes eval issue
+    needs: [format, spelling]
 
     permissions:
       packages: write # Needed to push docker image to ghcr.io
@@ -126,18 +147,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
+      - id: set-var
+        uses: ASzc/change-string-case-action@v5
+        with:
+          string: ${{ github.repository }}
+
       - name: Build and Push Image to ghcr.io
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: ghcr.io/${{ github.repository }}:production
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:test
+          tags: |
+            ghcr.io/${{ steps.set-var.outputs.lowercase }}:latest
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
           cache-to: type=inline # Inline cache is stored in the registry, embedded into the main image, and is pulled alongside the main image.
-          target: final # This is the target stage in the Dockerfile
+          target: release # This is the target stage in the Dockerfile
           labels: |
             org.opencontainers.image.title=Production Image
             org.opencontainers.image.description=Image used for production
-            org.opencontainers.image.source=ghcr.io/${{ github.repository }}
+            org.opencontainers.image.source=ghcr.io/${{ steps.set-var.outputs.lowercase }}
 
   clean-old-images:
     name: Clean Old Images
