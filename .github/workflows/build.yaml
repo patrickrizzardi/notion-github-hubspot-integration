@@ -113,7 +113,8 @@ jobs:
   build-final-image:
     name: Build Image for Deployment (Production)
     runs-on: ubuntu-latest
-    needs: [lint, format, spelling]
+    # TODO add lint as a need when bun fixes eval issue
+    needs: [format, spelling]
 
     permissions:
       packages: write # Needed to push docker image to ghcr.io
