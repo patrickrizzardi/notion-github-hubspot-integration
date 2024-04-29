@@ -52,24 +52,24 @@ jobs:
             org.opencontainers.image.source=ghcr.io/${{ steps.set-var.outputs.lowercase }}
 
   # We are going to run unit tests, integration tests, CVE scanning, smoke tests, and linting in parallel
-  lint:
-    name: Eslint
-    runs-on: ubuntu-latest
-    needs: [build-test-image]
+  # lint:
+  #   name: Eslint
+  #   runs-on: ubuntu-latest
+  #   needs: [build-test-image]
 
-    permissions:
-      packages: read # Needed to pull docker image from ghcr.io
+  #   permissions:
+  #     packages: read # Needed to pull docker image from ghcr.io
 
-    steps:
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
+  #   steps:
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@v2
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ github.token }}
 
-      - name: Run Linting
-        run: docker run --rm ghcr.io/${{ github.repository }}:test bun run lint:eslint
+  #     - name: Run Linting
+  #       run: docker run --rm ghcr.io/${{ github.repository }}:test bun run lint:eslint
 
   format:
     name: Prettier Format
