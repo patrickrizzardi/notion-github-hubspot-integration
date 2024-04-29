@@ -107,7 +107,7 @@ const transporters: Transports = {
     format: fileFormatter,
   }),
   datadog: new DatadogWinston({
-    apiKey: Bun.env.LOG_DATADOG_API_KEY,
+    apiKey: Bun.env.DATADOG_API_KEY,
     ddsource: 'nodejs',
     ddtags: `env:${Bun.env.NODE_ENV}`,
     service: `${Bun.env.NODE_ENV} ${Bun.env.APP_NAME}`,

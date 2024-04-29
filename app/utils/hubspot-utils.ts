@@ -16,7 +16,7 @@ export enum TicketStatus {
   Icebox = '177434699',
 }
 
-const hubspot = new Client({ accessToken: Bun.env.HUBSPOT_TOKEN });
+const hubspot = new Client({ accessToken: Bun.env.HUBSPOT_ACCESS_TOKEN });
 
 export default {
   tickets: (

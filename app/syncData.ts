@@ -45,8 +45,6 @@ export const syncData = async (githubIssue: Issue, notionPage: Page): Promise<vo
         },
       },
     });
-
-    log.info(`Updating issue #${githubIssue.number} to match Notion page ${notionPageId}`);
   } catch (error) {
     log.error(`Error updating issue #${githubIssue.number} to match Notion page ${notionPageId}`, error);
   }
