@@ -3,17 +3,15 @@ services:
   app:
     depends_on:
       - redis
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    #   target: prerelease
-    # image: notion-github-integration
-    image: ghcr.io/redactdigital/notion-github-hubspot-integration:latest
-
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prerelease
+    image: notion-github-integration
     restart: unless-stopped
     command: sh -c "bun install && bun start"
-    # volumes:
-    #   - ./:/usr/src/app
+    volumes:
+      - ./:/usr/src/app
     networks:
       - default
 
