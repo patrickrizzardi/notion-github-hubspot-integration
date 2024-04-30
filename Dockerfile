@@ -1,6 +1,7 @@
 FROM oven/bun as base
 ENV USER bun
-WORKDIR /usr/src/app
+ENV WORKDIR /usr/src/app
+WORKDIR ${WORKDIR}
 
 # Install dependencies into a temp directory
 # This will cache the dependencies and speed up future builds
