@@ -10,7 +10,7 @@
     "clean": "rm -rf dist && rm -rf storage && echo 'Done.'",
     "build": "bun build --target=bun --minify app/index.ts --outfile=dist/index.js",
     "start": "bun --watch app/index.ts",
-    "start:production": "bun index.ts",
+    "start:production": "bun index",
     "lint": "prettier --check app && eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore && cspell . --no-progress --unique",
     "lint:eslint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
     "lint:format": "prettier --check app",
