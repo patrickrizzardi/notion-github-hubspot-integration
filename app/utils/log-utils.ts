@@ -23,7 +23,6 @@ enum LogColor {
 
 interface Transports {
   console: transports.ConsoleTransportInstance;
-  file: transports.FileTransportInstance;
   datadog: DatadogWinston;
 }
 
@@ -74,37 +73,10 @@ const formatter = format.combine(
   }),
 );
 
-/**
- * This is the format that will be used for all File logs
- * The only difference is that we don't want to add color because it will mess up the log file
- */
-const fileFormatter = format.combine(
-  /** Adds timestamp to the format */
-  format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-
-  /** Format the way the log is output to the console */
-  format.printf((info: TransformableInfo) => {
-    const { timestamp, level, ...meta } = info;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    let { message } = info;
-
-    if (Object.keys(meta).length > 1) {
-      delete meta.message;
-      message = `${message} \n${JSON.stringify(meta, null, 2)}`;
-    }
-
-    return `${timestamp} [${level}]: ${message}`;
-  }),
-);
-
 /** ======================================== Defineing Transports ============================================ */
 const transporters: Transports = {
   console: new transports.Console({
     format: formatter,
-  }),
-  file: new transports.File({
-    filename: Bun.env.LOG_FILE ?? `./storage/logs/app.log`,
-    format: fileFormatter,
   }),
   datadog: new DatadogWinston({
     apiKey: Bun.env.DATADOG_API_KEY,
@@ -127,9 +99,6 @@ for (const transport of Bun.env.LOG_TRANSPORTS.split(',')) {
   switch (transport) {
     case 'console':
       transportsToUse.push(transporters.console);
-      break;
-    case 'file':
-      transportsToUse.push(transporters.file);
       break;
     case 'datadog':
       transportsToUse.push(transporters.datadog);
