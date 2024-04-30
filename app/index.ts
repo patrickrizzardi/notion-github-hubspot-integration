@@ -19,45 +19,6 @@ interface Issue {
   }>;
 }
 
-interface Page {
-  id: string;
-  url: string;
-  properties: {
-    ID: {
-      unique_id: {
-        prefix: string;
-        number: number;
-      };
-    };
-    'Hubspot Ticket ID': {
-      number: number;
-    };
-    'GitHub Issue ID': {
-      number: number;
-    };
-    Name: {
-      title: Array<{
-        plain_text: string;
-      }>;
-    };
-    Status: {
-      status: {
-        name: 'Backlog' | 'Closed' | 'Drafts' | 'Icebox' | 'In Progress' | 'Missing Information' | 'Open' | 'Testing';
-      };
-    };
-    Priority: {
-      select?: {
-        name: 'Critical' | 'High' | 'Low' | 'Normal';
-      };
-    };
-    Type: {
-      select?: {
-        name: 'Bug' | 'Enhancement' | 'Other';
-      };
-    };
-  };
-}
-
 worker();
 
 // /**
@@ -135,4 +96,4 @@ worker();
 
 // log.info(`${count} issues updated`);
 
-export type { Issue, Page };
+export type { Issue };

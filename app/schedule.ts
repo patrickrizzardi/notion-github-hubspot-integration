@@ -9,5 +9,5 @@ export { schedule };
  */
 
 const schedule = async (): Promise<void> => {
-  await dispatch(JobName.SYNC_HUBSPOT_TO_NOTION, {}, { priority: 1, repeat: { cron: cronUtil.everyMinute }, timeout: convertTime('1m') });
+  await dispatch(JobName.SYNC_NOTION_TO_HUBSPOT, {}, { priority: 1, repeat: { cron: cronUtil.everyMinute }, timeout: convertTime('1m') });
 };
