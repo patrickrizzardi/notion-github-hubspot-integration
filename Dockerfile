@@ -17,10 +17,16 @@ RUN cd /temp/prod && bun install --production --frozen-lockfile
 
 # Copy node modules from the temp directory to the build directory
 FROM base as prerelease
+ENV USER bun
+
 COPY --chown=${USER}:${USER} --from=install /temp/dev/node_modules ./node_modules
 COPY --chown=${USER}:${USER} . .
 
 ENV NODE_ENV=production
+ENV USER bun
+ENV WORKDIR /usr/src/app
+WORKDIR ${WORKDIR}
+
 RUN bun run build
 
 USER ${USER}
@@ -29,9 +35,9 @@ CMD [ "bun", "start" ]
 
 FROM prerelease as release
 COPY --chown=${USER}:${USER} --from=install /temp/prod/node_modules ./node_modules
-COPY --chown=${USER}:${USER} --from=prerelease ${WORKDIR} ./dist
-COPY --chown=${USER}:${USER} --chmod=750 entrypoint.sh entrypoint.sh
-ENTRYPOINT ["./entrypoint.sh"]
+COPY --chown=${USER}:${USER} --from=prerelease ./dist ./
+COPY --chown=${USER}:${USER} --chmod=750 entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["bun", "start:production"]
 
 # https://bun.sh/guides/ecosystem/docker
