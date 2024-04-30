@@ -152,3 +152,5 @@ export default {
     });
   },
 };
+
+export type { Page, Person };

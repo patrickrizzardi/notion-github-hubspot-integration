@@ -1,4 +1,5 @@
-import type { Issue, Page } from 'root/index.ts';
+import type { Page } from 'utils/notion-utils.ts';
+import type { Issue } from 'root/index.ts';
 import { github } from 'utils/github-utils.ts';
 import log from 'utils/log-utils.ts';
 import notionUtils from 'utils/notion-utils.ts';
@@ -27,9 +28,9 @@ export const syncData = async (githubIssue: Issue, notionPage: Page): Promise<vo
       labels,
     });
 
-    await notionUtils.pages.update({
+    await notionUtils.update({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      page_id: notionPage.id,
+      pageId: notionPage.id,
       properties: {
         Name: {
           title: [
