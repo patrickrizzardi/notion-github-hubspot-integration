@@ -2,7 +2,6 @@ FROM oven/bun as base
 ENV USER bun
 ENV WORKDIR /usr/src/app
 WORKDIR ${WORKDIR}
-USER ${USER}
 
 # Install dependencies into a temp directory
 # This will cache the dependencies and speed up future builds
@@ -25,11 +24,11 @@ COPY --chown=${USER}:${USER} . .
 
 RUN bun run build
 
+USER ${USER}
 CMD [ "bun", "start" ]
 
 FROM prerelease as release
 ENV NODE_ENV=production
-USER root
 
 COPY --chown=${USER}:${USER} --from=install /temp/prod/node_modules ./node_modules
 COPY --chown=${USER}:${USER} --from=prerelease /usr/src/app/dist ./
