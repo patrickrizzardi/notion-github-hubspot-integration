@@ -27,7 +27,7 @@ RUN cd /temp/dev && bun install --frozen-lockfile
 FROM base as prodInstall
 # Install dependencies for production
 # Using a temp directory will cache the dependencies and speed up future builds
-RUN mkdir /temp/prod
+RUN mkdir -p /temp/prod
 COPY --chown=${USER}:${USER} package.json bun.lockb /temp/prod/
 RUN cd /temp/prod && bun install --production --frozen-lockfile
 
