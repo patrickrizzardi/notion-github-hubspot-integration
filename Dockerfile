@@ -46,7 +46,7 @@ RUN bun run build
 FROM build as release
 ENV NODE_ENV=production
 
-COPY --from=install /temp/prod/node_modules ./node_modules
+COPY --from=prodInstall /temp/prod/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./
 COPY --chmod=700 --from=build /usr/src/app/entrypoint.sh ./entrypoint.sh
 
