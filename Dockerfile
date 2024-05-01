@@ -32,11 +32,11 @@ ENV NODE_ENV=production
 
 COPY --chown=${USER}:${USER} --from=install /temp/prod/node_modules ./node_modules
 COPY --chown=${USER}:${USER} --from=prerelease /usr/src/app/dist ./
-COPY --chown=${USER}:${USER} --chmod=700 --from=prerelease /usr/src/app/entrypoint.sh /entrypoint.sh
+COPY --chown=${USER}:${USER} --chmod=700 --from=prerelease /usr/src/app/entrypoint.sh ./entrypoint.sh
 
 USER ${USER}
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["bun", "start:production"]
 
 # https://bun.sh/guides/ecosystem/docker
