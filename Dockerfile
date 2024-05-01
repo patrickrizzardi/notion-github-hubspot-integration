@@ -34,6 +34,10 @@ COPY --chown=${USER}:${USER} --from=install /temp/prod/node_modules ./node_modul
 COPY --chown=${USER}:${USER} --from=prerelease /usr/src/app/dist ./
 COPY --chown=${USER}:${USER} --chmod=700 --from=prerelease /usr/src/app/entrypoint.sh ./entrypoint.sh
 
+# Entrypoint script won't run without setting the ownership first
+USER root
+RUN chown -R ${USER}:${USER} ${WORKDIR}
+
 USER ${USER}
 
 ENTRYPOINT ["./entrypoint.sh"]
