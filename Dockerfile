@@ -25,6 +25,10 @@ RUN cd /temp/dev && bun install --frozen-lockfile
 
 # * -------------------- Install --------------------
 FROM base as prodInstall
+
+# Set the user to root to avoid permission issues
+USER root
+
 # Install dependencies for production
 # Using a temp directory will cache the dependencies and speed up future builds
 RUN mkdir -p /temp/prod
