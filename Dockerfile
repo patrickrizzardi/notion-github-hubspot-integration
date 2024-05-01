@@ -33,16 +33,16 @@ USER root
 # Install dependencies for production
 # Using a temp directory will cache the dependencies and speed up future builds
 RUN mkdir -p /temp/prod
-COPY --chown=${USER}:${USER} package.json bun.lockb /temp/prod/
+COPY package.json bun.lockb /temp/prod/
 RUN cd /temp/prod && bun install --production --frozen-lockfile
 
 # * -------------------- Build --------------------
 # Copy node modules from the temp directory to the build directory
-FROM base as build
+FROM devInstall as build
 WORKDIR ${WORKDIR}
 
-COPY --chown=${USER}:${USER} --from=devInstall /temp/dev/node_modules ./node_modules
-COPY --chown=${USER}:${USER} . .
+COPY --from=devInstall /temp/dev/node_modules ./node_modules
+COPY  . .
 
 RUN bun run build
 
