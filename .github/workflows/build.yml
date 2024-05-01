@@ -45,7 +45,7 @@ jobs:
           tags: ghcr.io/${{ steps.set-var.outputs.lowercase }}:test
           cache-from: type=registry,ref=ghcr.io/${{ steps.set-var.outputs.lowercase }}:test
           cache-to: type=inline # Inline cache is stored in the registry, embedded into the main image, and is pulled alongside the main image.
-          target: devInstall # This is the target stage in the Dockerfile
+          target: build # This is the target stage in the Dockerfile
           labels: |
             org.opencontainers.image.title=Test Image
             org.opencontainers.image.description=Image used for testing

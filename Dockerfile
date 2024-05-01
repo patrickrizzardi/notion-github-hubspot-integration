@@ -10,7 +10,6 @@ USER ${USER}
 CMD [ "bun", "start" ]
 
 # * -------------------- Install Development --------------------
-# * Use `target install` if you are using docker compose for CI/CD tests, linting, etc.
 FROM base as devInstall
 
 # Set the user to root to avoid permission issues
