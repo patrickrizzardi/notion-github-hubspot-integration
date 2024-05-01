@@ -38,7 +38,7 @@ RUN cd /temp/prod && bun install --production --frozen-lockfile
 
 # * -------------------- Build --------------------
 # Copy node modules from the temp directory to the build directory
-FROM devInstall as build
+FROM base as build
 WORKDIR ${WORKDIR}
 
 COPY --from=devInstall /temp/dev/node_modules ./node_modules
