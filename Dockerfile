@@ -41,7 +41,7 @@ RUN cd /temp/prod && bun install --production --frozen-lockfile
 FROM base as build
 WORKDIR ${WORKDIR}
 
-COPY --chown=${USER}:${USER} --from=devInstall /temp/prod/node_modules ./node_modules
+COPY --chown=${USER}:${USER} --from=devInstall /temp/dev/node_modules ./node_modules
 COPY --chown=${USER}:${USER} . .
 
 RUN bun run build
