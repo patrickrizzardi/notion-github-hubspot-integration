@@ -67,5 +67,5 @@ RUN chown -R ${USER}:${USER} ${WORKDIR}
 USER ${USER}
 
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["bun", "start:production"]
+CMD ["bun", "index.js"]
 
