@@ -1,4 +1,4 @@
-import type { Page } from 'root/index.ts';
+import type { Page } from 'utils/notion-utils.ts';
 import { github } from 'utils/github-utils.ts';
 import notionUtils from 'utils/notion-utils.ts';
 import log from 'utils/log-utils.ts';
@@ -29,8 +29,8 @@ export const createGithubIssueFromNotion = async (pagesWithoutGithubIssues: Arra
       labels,
     });
 
-    await notionUtils.pages.update({
-      page_id: notionPage.id,
+    await notionUtils.update({
+      pageId: notionPage.id,
       properties: {
         'GitHub Issue ID': {
           number: newGithubIssue.data.number,

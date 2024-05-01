@@ -1,12 +1,30 @@
 version: '3.7'
 services:
   app:
+    depends_on:
+      - redis
     build:
       context: .
       dockerfile: Dockerfile
-      target: prerelease
+      target: base
     image: notion-github-integration
     restart: unless-stopped
-    command: sh -c "bun install && bun start"
     volumes:
       - ./:/usr/src/app
+    networks:
+      - default
+
+  redis:
+    image: redis:alpine
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 30s
+      retries: 3
+      start_period: 5s
+    ports:
+      - 6379:6379
+    networks:
+      - default

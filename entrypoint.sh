@@ -2,7 +2,7 @@
 
 # Add docker secrets to .env file
 PATH_SECRETS=/run/secrets
-EXISTING_ENV_FILE=.env
+EXISTING_ENV_FILE=$WORKDIR/.env
 
 # If the .env file exists, stop the script and tell the user to remove it and try again
 # This way if we are testing the script, we don't accidentally overwrite the .env file
@@ -13,7 +13,7 @@ fi
 
 if [ -d "$PATH_SECRETS" ]; then
     for secret in $(ls $PATH_SECRETS); do
-        echo "$secret='$(cat $PATH_SECRETS/$secret)'" >>.env
+        echo "$secret='$(cat $PATH_SECRETS/$secret)'" >>$EXISTING_ENV_FILE
     done
 fi
 

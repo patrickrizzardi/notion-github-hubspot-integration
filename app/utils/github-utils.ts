@@ -6,7 +6,7 @@ import { Octokit } from '@octokit/rest';
  */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const github = new Octokit({
-  auth: Bun.env.GITHUB_TOKEN,
+  auth: Bun.env.GITHUB_ACCESS_TOKEN,
 });
 
 export { github };

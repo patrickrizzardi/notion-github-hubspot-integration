@@ -16,7 +16,7 @@ export enum TicketStatus {
   Icebox = '177434699',
 }
 
-const hubspot = new Client({ accessToken: Bun.env.HUBSPOT_TOKEN });
+const hubspot = new Client({ accessToken: Bun.env.HUBSPOT_ACCESS_TOKEN });
 
 export default {
   tickets: (
@@ -57,7 +57,7 @@ export default {
   createTicket: async (
     tickets: Array<SimplePublicObjectInputForCreate>,
   ): Promise<BatchResponseSimplePublicObject | BatchResponseSimplePublicObjectWithErrors> => hubspot.crm.tickets.batchApi.create({ inputs: tickets }),
-  updateTicket: async (ticketId: string, ticket: Record<string, string>): Promise<void> => {
+  updateTicket: async (ticketId: string, ticket: Record<string, any>): Promise<void> => {
     await hubspot.crm.tickets.batchApi.update({ inputs: [{ id: ticketId, properties: ticket }] });
   },
 };

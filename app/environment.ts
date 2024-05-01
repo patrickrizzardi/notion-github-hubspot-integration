@@ -22,19 +22,19 @@ declare module 'bun' {
      * This is unused if you don't add `datadog` to `LOG_TRANSPORTS`.
      * If you use `datadog` as a transport, you must set this.
      */
-    LOG_DATADOG_API_KEY: string;
+    DATADOG_API_KEY: string;
   }
 
   interface ServicesEnv {
     /**
      * This is a required environment variable, otherwise the app will not work.
      */
-    GITHUB_TOKEN: string;
+    GITHUB_ACCESS_TOKEN: string;
 
     /**
      * This is a required environment variable, otherwise the app will not work.
      */
-    NOTION_TOKEN: string;
+    NOTION_ACCESS_TOKEN: string;
 
     /**
      * This is a required environment variable, otherwise the app will not work.
@@ -44,7 +44,7 @@ declare module 'bun' {
     /**
      * This is a required environment variable, otherwise the app will not work.
      */
-    HUBSPOT_TOKEN: string;
+    HUBSPOT_ACCESS_TOKEN: string;
 
     /**
      * This is a required environment variable, otherwise the app will not work.
@@ -52,9 +52,31 @@ declare module 'bun' {
     HUBSPOT_PIPELINE_ID: string;
   }
 
-  export interface Env extends LogEnv, ServicesEnv {
+  interface RedisEnv {
     /**
-     * This defaults to `development` if not set.
+     * This is a required environment variable, otherwise the app will not work.
+     */
+    REDIS_HOST: string;
+
+    /**
+     * This is a required environment variable, otherwise the app will not work.
+     */
+    REDIS_PORT: number;
+
+    /**
+     * This is a required environment variable, otherwise the app will not work.
+     */
+    REDIS_PASSWORD: string;
+
+    /**
+     * This is a required environment variable, otherwise the app will not work.
+     */
+    REDIS_USER: string;
+  }
+
+  export interface Env extends LogEnv, ServicesEnv, RedisEnv {
+    /**
+     * This defaults to `development` if not set.ACCESS_
      */
     NODE_ENV?: string;
 
