@@ -37,6 +37,7 @@ FROM prerelease as release
 COPY --chown=${USER}:${USER} --from=install /temp/prod/node_modules ./node_modules
 COPY --chown=${USER}:${USER} --from=prerelease /usr/src/app/dist ./
 COPY --chown=${USER}:${USER} --chmod=700 --from=prerelease /usr/src/app/entrypoint.sh /entrypoint.sh
+RUN chown -R ${USER}:${USER} /usr/src/app
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["bun", "start:production"]
 
