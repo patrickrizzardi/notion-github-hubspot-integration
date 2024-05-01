@@ -6,10 +6,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: prerelease
+      target: base
     image: notion-github-integration
     restart: unless-stopped
-    command: sh -c "bun install && bun start"
     volumes:
       - ./:/usr/src/app
     networks:
