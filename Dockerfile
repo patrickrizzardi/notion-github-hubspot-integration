@@ -50,15 +50,17 @@ RUN bun run build
 
 # * -------------------- Release --------------------
 # * Use `target release` if you are using for production
-FROM build as release
+FROM base as release
 ENV NODE_ENV=production
+
+# Set the user to root to avoid permission issues
+USER root
 
 COPY --from=prodInstall /temp/prod/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./
 COPY --chmod=700 --from=build /usr/src/app/entrypoint.sh ./entrypoint.sh
 
 # ! Entrypoint script won't run without setting the ownership first
-USER root
 RUN chown -R ${USER}:${USER} ${WORKDIR}
 
 # ! Set the user back to the bun user for security
