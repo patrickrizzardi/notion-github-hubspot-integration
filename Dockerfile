@@ -17,22 +17,23 @@ RUN cd /temp/prod && bun install --production --frozen-lockfile
 
 # Copy node modules from the temp directory to the build directory
 FROM base as prerelease
+ENV WORKDIR /usr/src/app
 ENV USER bun
+WORKDIR ${WORKDIR}
 
 COPY --chown=${USER}:${USER} --from=install /temp/dev/node_modules ./node_modules
 COPY --chown=${USER}:${USER} . .
 
-ENV NODE_ENV=production
-ENV USER bun
-ENV WORKDIR /usr/src/app
-WORKDIR ${WORKDIR}
 USER ${USER}
-
 RUN bun run build
 
 CMD [ "bun", "start" ]
 
 FROM prerelease as release
+ENV NODE_ENV=production
+ENV WORKDIR /usr/src/app
+ENV USER bun
+WORKDIR ${WORKDIR}
 USER root
 COPY --chown=${USER}:${USER} --from=install /temp/prod/node_modules ./node_modules
 COPY --chown=${USER}:${USER} --from=prerelease /usr/src/app/dist ./
