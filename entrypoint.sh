@@ -4,6 +4,10 @@
 PATH_SECRETS=/run/secrets
 EXISTING_ENV_FILE=$WORKDIR/.env
 
+echo $EXISTING_ENV_FILE
+
+echo "WORKDIR ownership:" $(ls -ld $WORKDIR)
+
 # If the .env file exists, stop the script and tell the user to remove it and try again
 # This way if we are testing the script, we don't accidentally overwrite the .env file
 if [ -f "$EXISTING_ENV_FILE" ]; then
