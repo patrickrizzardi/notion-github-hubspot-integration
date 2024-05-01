@@ -41,6 +41,9 @@ RUN cd /temp/prod && bun install --production --frozen-lockfile
 FROM base as build
 WORKDIR ${WORKDIR}
 
+# Set the user to root to avoid permission issues
+USER root
+
 COPY --from=devInstall /temp/dev/node_modules ./node_modules
 COPY  . .
 
