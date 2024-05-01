@@ -13,7 +13,7 @@ fi
 
 if [ -d "$PATH_SECRETS" ]; then
     for secret in $(ls $PATH_SECRETS); do
-        echo "$secret='$(cat $PATH_SECRETS/$secret)'" >>.env
+        echo "$secret='$(cat $PATH_SECRETS/$secret)'" >>$EXISTING_ENV_FILE
     done
 fi
 
