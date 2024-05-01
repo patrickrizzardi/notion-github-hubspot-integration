@@ -2,6 +2,7 @@ FROM oven/bun as base
 ENV USER bun
 ENV WORKDIR /usr/src/app
 WORKDIR ${WORKDIR}
+USER ${USER}
 
 # Install dependencies into a temp directory
 # This will cache the dependencies and speed up future builds
@@ -17,28 +18,25 @@ RUN cd /temp/prod && bun install --production --frozen-lockfile
 
 # Copy node modules from the temp directory to the build directory
 FROM base as prerelease
-ENV WORKDIR /usr/src/app
-ENV USER bun
 WORKDIR ${WORKDIR}
 
 COPY --chown=${USER}:${USER} --from=install /temp/dev/node_modules ./node_modules
 COPY --chown=${USER}:${USER} . .
 
-USER ${USER}
 RUN bun run build
 
 CMD [ "bun", "start" ]
 
 FROM prerelease as release
 ENV NODE_ENV=production
-ENV WORKDIR /usr/src/app
-ENV USER bun
-WORKDIR ${WORKDIR}
 USER root
+
 COPY --chown=${USER}:${USER} --from=install /temp/prod/node_modules ./node_modules
 COPY --chown=${USER}:${USER} --from=prerelease /usr/src/app/dist ./
 COPY --chown=${USER}:${USER} --chmod=700 --from=prerelease /usr/src/app/entrypoint.sh /entrypoint.sh
+
 USER ${USER}
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["bun", "start:production"]
 
