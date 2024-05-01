@@ -26,18 +26,18 @@ ENV NODE_ENV=production
 ENV USER bun
 ENV WORKDIR /usr/src/app
 WORKDIR ${WORKDIR}
+USER ${USER}
 
 RUN bun run build
-
-USER ${USER}
 
 CMD [ "bun", "start" ]
 
 FROM prerelease as release
+USER root
 COPY --chown=${USER}:${USER} --from=install /temp/prod/node_modules ./node_modules
 COPY --chown=${USER}:${USER} --from=prerelease /usr/src/app/dist ./
 COPY --chown=${USER}:${USER} --chmod=700 --from=prerelease /usr/src/app/entrypoint.sh /entrypoint.sh
-RUN chown -R ${USER}:${USER} /usr/src/app
+USER ${USER}
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["bun", "start:production"]
 
