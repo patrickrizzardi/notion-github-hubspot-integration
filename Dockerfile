@@ -9,7 +9,7 @@ WORKDIR ${WORKDIR}
 USER ${USER}
 CMD [ "bun", "start" ]
 
-# * -------------------- Install --------------------
+# * -------------------- Install Development --------------------
 # * Use `target install` if you are using docker compose for CI/CD tests, linting, etc.
 FROM base as devInstall
 
@@ -23,7 +23,8 @@ COPY --chown=${USER}:${USER} package.json bun.lockb /temp/dev/
 RUN cd /temp/dev && bun install --frozen-lockfile
 
 
-# * -------------------- Install --------------------
+# * -------------------- Install Prod --------------------
+# Production and development installations are being separated to save time in the CI/CD pipeline during linting and testing, as production dependencies are not required for these steps
 FROM base as prodInstall
 
 # Set the user to root to avoid permission issues
@@ -40,7 +41,7 @@ RUN cd /temp/prod && bun install --production --frozen-lockfile
 FROM base as build
 WORKDIR ${WORKDIR}
 
-COPY --chown=${USER}:${USER} --from=prodInstall /temp/prod/node_modules ./node_modules
+COPY --chown=${USER}:${USER} --from=devInstall /temp/prod/node_modules ./node_modules
 COPY --chown=${USER}:${USER} . .
 
 RUN bun run build
