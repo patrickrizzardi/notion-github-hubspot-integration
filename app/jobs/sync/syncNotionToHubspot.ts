@@ -23,7 +23,9 @@ export default {
                 subject: ticket.properties.Name.title[0] ? ticket.properties.Name.title[0].plain_text : 'No title',
                 content: ticket.url,
                 hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
-                hs_pipeline_stage: TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name],
+                hs_pipeline_stage: ticket.properties.Status.status
+                  ? TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name]
+                  : TicketStatus.Drafts,
                 development_priority: ticket.properties.Priority.select ? ticket.properties.Priority.select.name : 'Normal',
                 development_type: ticket.properties.Type.select ? ticket.properties.Type.select.name : 'Other',
               },
@@ -65,7 +67,9 @@ export default {
           subject: ticket.properties.Name.title[0] ? ticket.properties.Name.title[0].plain_text : 'No title',
           content: ticket.url,
           hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
-          hs_pipeline_stage: TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name],
+          hs_pipeline_stage: ticket.properties.Status.status
+            ? TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name]
+            : TicketStatus.Drafts,
           development_priority: ticket.properties.Priority.select ? ticket.properties.Priority.select.name : 'Normal',
           development_type: ticket.properties.Type.select ? ticket.properties.Type.select.name : 'Other',
           hubspot_owner_id: assignee ? String(assignee) : undefined,
@@ -75,7 +79,7 @@ export default {
       log.info(`${notionPages.length} hubspot tickets updated`);
       await dispatch(JobName.SYNC_HUBSPOT_TO_NOTION, {}, { priority: 1, timeout: convertTime('1m') });
     } catch (error) {
-      log.error('Error syncing Notion to Hubspot', error);
+      log.error(error);
     }
   },
 };

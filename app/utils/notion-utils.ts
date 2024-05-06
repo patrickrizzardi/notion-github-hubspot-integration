@@ -24,7 +24,7 @@ interface Page {
       }>;
     };
     Status: {
-      status: {
+      status?: {
         name: 'Backlog' | 'Closed' | 'Drafts' | 'Icebox' | 'In Progress' | 'Missing Information' | 'Open' | 'Testing';
       };
     };
