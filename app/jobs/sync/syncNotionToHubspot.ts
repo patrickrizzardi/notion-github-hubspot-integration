@@ -46,7 +46,6 @@ export default {
       //   }
       // }
 
-
       log.info(`${ticketsThatNeedAddedToHubspot.length} hubspot tickets created`);
 
       /**
