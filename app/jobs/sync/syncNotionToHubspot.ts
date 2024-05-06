@@ -15,7 +15,6 @@ export default {
       const notionPages = notionUtils.pages;
 
       const ticketsThatNeedAddedToHubspot = notionPages.filter((page) => !page.properties['Hubspot Ticket ID'].number);
-      log.warn('-------------------------', { notionPages: notionPages.length });
 
       const newTickets = await hubspotUtils.createTicket(
         ticketsThatNeedAddedToHubspot.map(
