@@ -1,4 +1,4 @@
-import type { SimplePublicObjectInputForCreate } from '@hubspot/api-client/lib/codegen/crm/companies/index.js';
+// import type { SimplePublicObjectInputForCreate } from '@hubspot/api-client/lib/codegen/crm/companies/index.js';
 import { convertTime } from 'utils/convertTime-utils.ts';
 import { JobName, dispatch } from 'utils/dispatch-utils.ts';
 import hubspotUtils, { TicketStatus } from 'utils/hubspot-utils.ts';
