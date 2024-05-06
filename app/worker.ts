@@ -70,8 +70,10 @@ const eventListeners = {
   completed: (job: Bull.Job): void => {
     log.info(`Job ${job.id} completed on host ${os.hostname()}`);
   },
-  stalled: (job: Bull.Job): void => {
-    log.warn(`Job ${job.id} stalled`);
+  stalled: async (job: Bull.Job): Promise<void> => {
+    log.warn(`Job ${job.id} stalled, removing job from queue`);
+    // remove the job from the queue
+    await job.remove();
   },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   failed: (job: Bull.Job, error: any): void => {

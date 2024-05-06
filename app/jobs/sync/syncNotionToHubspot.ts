@@ -15,23 +15,22 @@ export default {
       const notionPages = notionUtils.pages;
 
       const ticketsThatNeedAddedToHubspot = notionPages.filter((page) => !page.properties['Hubspot Ticket ID'].number);
-
-      const newTickets = await hubspotUtils.createTicket(
-        ticketsThatNeedAddedToHubspot.map(
-          (ticket) => <SimplePublicObjectInputForCreate>(<unknown>{
-              properties: {
-                subject: ticket.properties.Name.title[0] ? ticket.properties.Name.title[0].plain_text : 'No title',
-                content: ticket.url,
-                hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
-                hs_pipeline_stage: ticket.properties.Status.status
-                  ? TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name]
-                  : TicketStatus.Drafts,
-                development_priority: ticket.properties.Priority.select ? ticket.properties.Priority.select.name : 'Normal',
-                development_type: ticket.properties.Type.select ? ticket.properties.Type.select.name : 'Other',
-              },
-            }),
-        ),
+      const formattedTickets = ticketsThatNeedAddedToHubspot.map(
+        (ticket) => <SimplePublicObjectInputForCreate>(<unknown>{
+            properties: {
+              subject: ticket.properties.Name.title[0] ? ticket.properties.Name.title[0].plain_text : 'No title',
+              content: ticket.url,
+              hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
+              hs_pipeline_stage: ticket.properties.Status.status
+                ? TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name]
+                : TicketStatus.Drafts,
+              development_priority: ticket.properties.Priority.select ? ticket.properties.Priority.select.name : 'Normal',
+              development_type: ticket.properties.Type.select ? ticket.properties.Type.select.name : 'Other',
+            },
+          }),
       );
+
+      const newTickets = await hubspotUtils.createTicket(formattedTickets);
 
       for (const ticket of newTickets.results) {
         const notionPage = notionPages.find((page) => page.url === ticket.properties.content);
@@ -77,7 +76,7 @@ export default {
       }
 
       log.info(`${notionPages.length} hubspot tickets updated`);
-      await dispatch(JobName.SYNC_HUBSPOT_TO_NOTION, {}, { priority: 1, timeout: convertTime('2m') });
+      await dispatch(JobName.SYNC_HUBSPOT_TO_NOTION, {}, { priority: 1, timeout: convertTime('4m') });
     } catch (error) {
       log.error(error);
     }
