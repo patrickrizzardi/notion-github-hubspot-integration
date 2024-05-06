@@ -1,4 +1,4 @@
-// import type { SimplePublicObjectInputForCreate } from '@hubspot/api-client/lib/codegen/crm/companies/index.js';
+import type { SimplePublicObjectInputForCreate } from '@hubspot/api-client/lib/codegen/crm/companies/index.js';
 import { convertTime } from 'utils/convertTime-utils.ts';
 import { JobName, dispatch } from 'utils/dispatch-utils.ts';
 import hubspotUtils, { TicketStatus } from 'utils/hubspot-utils.ts';
@@ -17,34 +17,34 @@ export default {
       const ticketsThatNeedAddedToHubspot = notionPages.filter((page) => !page.properties['Hubspot Ticket ID'].number);
       log.warn('-------------------------', { notionPages: notionPages.length });
 
-      // const newTickets = await hubspotUtils.createTicket(
-      //   ticketsThatNeedAddedToHubspot.map(
-      //     (ticket) => <SimplePublicObjectInputForCreate>(<unknown>{
-      //         properties: {
-      //           subject: ticket.properties.Name.title[0] ? ticket.properties.Name.title[0].plain_text : 'No title',
-      //           content: ticket.url,
-      //           hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
-      //           hs_pipeline_stage: TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name],
-      //           development_priority: ticket.properties.Priority.select ? ticket.properties.Priority.select.name : 'Normal',
-      //           development_type: ticket.properties.Type.select ? ticket.properties.Type.select.name : 'Other',
-      //         },
-      //       }),
-      //   ),
-      // );
+      const newTickets = await hubspotUtils.createTicket(
+        ticketsThatNeedAddedToHubspot.map(
+          (ticket) => <SimplePublicObjectInputForCreate>(<unknown>{
+              properties: {
+                subject: ticket.properties.Name.title[0] ? ticket.properties.Name.title[0].plain_text : 'No title',
+                content: ticket.url,
+                hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
+                hs_pipeline_stage: TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name],
+                development_priority: ticket.properties.Priority.select ? ticket.properties.Priority.select.name : 'Normal',
+                development_type: ticket.properties.Type.select ? ticket.properties.Type.select.name : 'Other',
+              },
+            }),
+        ),
+      );
 
-      // for (const ticket of newTickets.results) {
-      //   const notionPage = notionPages.find((page) => page.url === ticket.properties.content);
-      //   if (notionPage) {
-      //     await notionUtils.update({
-      //       pageId: notionPage.id,
-      //       properties: {
-      //         'Hubspot Ticket ID': {
-      //           number: Number(ticket.id),
-      //         },
-      //       },
-      //     });
-      //   }
-      // }
+      for (const ticket of newTickets.results) {
+        const notionPage = notionPages.find((page) => page.url === ticket.properties.content);
+        if (notionPage) {
+          await notionUtils.update({
+            pageId: notionPage.id,
+            properties: {
+              'Hubspot Ticket ID': {
+                number: Number(ticket.id),
+              },
+            },
+          });
+        }
+      }
 
       log.info(`${ticketsThatNeedAddedToHubspot.length} hubspot tickets created`);
 
