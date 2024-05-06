@@ -98,7 +98,7 @@ export default {
 
       // log.info(`${notionPages.length} notion pages updated`);
     } catch (error) {
-      log.error(error);
+      log.error('Error syncing Hubspot to Notion', error);
     }
   },
 };
