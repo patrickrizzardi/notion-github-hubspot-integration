@@ -77,7 +77,7 @@ export default {
       }
 
       log.info(`${notionPages.length} hubspot tickets updated`);
-      await dispatch(JobName.SYNC_HUBSPOT_TO_NOTION, {}, { priority: 1, timeout: convertTime('4m') });
+      await dispatch(JobName.SYNC_HUBSPOT_TO_NOTION, {}, { priority: 1, timeout: convertTime('1m') });
     } catch (error) {
       log.error(error);
     }
