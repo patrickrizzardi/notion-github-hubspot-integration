@@ -54,7 +54,7 @@ export default {
 
     return ticket.properties;
   },
-  createTicket: async (
+  createTickets: async (
     tickets: Array<SimplePublicObjectInputForCreate>,
   ): Promise<BatchResponseSimplePublicObject | BatchResponseSimplePublicObjectWithErrors> => hubspot.crm.tickets.batchApi.create({ inputs: tickets }),
   updateTicket: async (ticketId: string, ticket: Record<string, any>): Promise<void> => {

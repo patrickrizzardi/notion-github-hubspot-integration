@@ -12,9 +12,10 @@ export default {
     try {
       log.info('Syncing Notion to Hubspot...');
 
-      const notionPages = notionUtils.pages;
+      const notionPages = await notionUtils.pages();
 
       const ticketsThatNeedAddedToHubspot = notionPages.filter((page) => !page.properties['Hubspot Ticket ID'].number);
+
       const formattedTickets = ticketsThatNeedAddedToHubspot.map(
         (ticket) => <SimplePublicObjectInputForCreate>(<unknown>{
             properties: {
@@ -30,7 +31,7 @@ export default {
           }),
       );
 
-      const newTickets = await hubspotUtils.createTicket(formattedTickets);
+      const newTickets = await hubspotUtils.createTickets(formattedTickets);
 
       for (const ticket of newTickets.results) {
         const notionPage = notionPages.find((page) => page.url === ticket.properties.content);
@@ -46,7 +47,7 @@ export default {
         }
       }
 
-      log.info(`${ticketsThatNeedAddedToHubspot.length} hubspot tickets created`);
+      log.info(`${formattedTickets.length} hubspot tickets created`);
 
       /**
        * For now we will only update the pipeline status because we don't want to overwrite the data in Hubspot

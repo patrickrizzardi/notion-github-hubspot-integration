@@ -13,11 +13,13 @@ export default {
        * github and hubspot. So we will get the notion pages and than sync
        * those with github and hubspot.
        */
-      const notionPages = notionUtils.pages;
+      const notionPages = await notionUtils.pages();
 
       const ticketsThatNeedAddedToNotion = hubspotUtils.tickets.filter(
         (ticket) => !notionPages.some((page) => page.properties['Hubspot Ticket ID'].number === Number(ticket.id)),
       );
+
+      log.info(`${ticketsThatNeedAddedToNotion.length} tickets need added to notion`);
 
       for (const ticket of ticketsThatNeedAddedToNotion) {
         await notionUtils.create({
