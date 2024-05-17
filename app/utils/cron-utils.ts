@@ -196,6 +196,8 @@ class CronHelper implements CronUtilInterface {
 
   everyMinute = '* * * * *';
 
+  everyFiveMinutes = '*/5 * * * *';
+
   everyHour = '0 * * * *';
 
   /**

@@ -12,24 +12,28 @@ export default {
     try {
       log.info('Syncing Notion to Hubspot...');
 
-      const notionPages = notionUtils.pages;
+      const notionPages = await notionUtils.pages();
 
       const ticketsThatNeedAddedToHubspot = notionPages.filter((page) => !page.properties['Hubspot Ticket ID'].number);
 
-      const newTickets = await hubspotUtils.createTicket(
-        ticketsThatNeedAddedToHubspot.map(
-          (ticket) => <SimplePublicObjectInputForCreate>(<unknown>{
-              properties: {
-                subject: ticket.properties.Name.title[0] ? ticket.properties.Name.title[0].plain_text : 'No title',
-                content: ticket.url,
-                hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
-                hs_pipeline_stage: TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name],
-                development_priority: ticket.properties.Priority.select ? ticket.properties.Priority.select.name : 'Normal',
-                development_type: ticket.properties.Type.select ? ticket.properties.Type.select.name : 'Other',
-              },
-            }),
-        ),
+      const formattedTickets = ticketsThatNeedAddedToHubspot.map(
+        (ticket) => <SimplePublicObjectInputForCreate>(<unknown>{
+            properties: {
+              subject: ticket.properties.Name.title[0]
+                ? `[${`${ticket.properties.ID.unique_id.prefix}-${ticket.properties.ID.unique_id.number}`}] ${ticket.properties.Name.title[0].plain_text}`
+                : 'No title',
+              content: ticket.url,
+              hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
+              hs_pipeline_stage: ticket.properties.Status.status
+                ? TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name]
+                : TicketStatus.Drafts,
+              development_priority: ticket.properties.Priority.select ? ticket.properties.Priority.select.name : 'Normal',
+              development_type: ticket.properties.Type.select ? ticket.properties.Type.select.name : 'Other',
+            },
+          }),
       );
+
+      const newTickets = await hubspotUtils.createTickets(formattedTickets);
 
       for (const ticket of newTickets.results) {
         const notionPage = notionPages.find((page) => page.url === ticket.properties.content);
@@ -45,7 +49,7 @@ export default {
         }
       }
 
-      log.info(`${ticketsThatNeedAddedToHubspot.length} hubspot tickets created`);
+      log.info(`${formattedTickets.length} hubspot tickets created`);
 
       /**
        * For now we will only update the pipeline status because we don't want to overwrite the data in Hubspot
@@ -65,7 +69,9 @@ export default {
           subject: ticket.properties.Name.title[0] ? ticket.properties.Name.title[0].plain_text : 'No title',
           content: ticket.url,
           hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
-          hs_pipeline_stage: TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name],
+          hs_pipeline_stage: ticket.properties.Status.status
+            ? TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name]
+            : TicketStatus.Drafts,
           development_priority: ticket.properties.Priority.select ? ticket.properties.Priority.select.name : 'Normal',
           development_type: ticket.properties.Type.select ? ticket.properties.Type.select.name : 'Other',
           hubspot_owner_id: assignee ? String(assignee) : undefined,

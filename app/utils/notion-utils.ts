@@ -13,7 +13,7 @@ interface Page {
       };
     };
     'Hubspot Ticket ID': {
-      number: number;
+      number: number | null;
     };
     'GitHub Issue ID': {
       number: number;
@@ -24,7 +24,7 @@ interface Page {
       }>;
     };
     Status: {
-      status: {
+      status?: {
         name: 'Backlog' | 'Closed' | 'Drafts' | 'Icebox' | 'In Progress' | 'Missing Information' | 'Open' | 'Testing';
       };
     };
@@ -118,16 +118,32 @@ const notion = new Client({
 });
 
 export default {
+  // pages: <Array<Page>>(<unknown>(
+  //   await notion.databases.query({
+  //     database_id: Bun.env.NOTION_DATABASE_ID,
+  //   })
+  // ).results),
   /**
    * Notion will be our source of truth for the tasks/issues between
    * github and hubspot. So we will get the notion pages and than sync
    * those with github and hubspot.
    */
-  pages: <Array<Page>>(<unknown>(
-    await notion.databases.query({
+  pages: async (): Promise<Array<Page>> => {
+    let res = await notion.databases.query({
       database_id: Bun.env.NOTION_DATABASE_ID,
-    })
-  ).results),
+    });
+    let pages = res.results;
+
+    while (res.has_more && res.next_cursor) {
+      res = await notion.databases.query({
+        database_id: Bun.env.NOTION_DATABASE_ID,
+        start_cursor: res.next_cursor,
+      });
+      pages = [...pages, ...res.results];
+    }
+
+    return <Array<Page>>(<unknown>pages);
+  },
   user: async (pageId: string): Promise<Person> => {
     const user = <PageObjectResponse>await notion.pages.retrieve({ page_id: pageId });
     const { properties } = user;
