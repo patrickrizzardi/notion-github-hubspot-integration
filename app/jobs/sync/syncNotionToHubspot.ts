@@ -19,7 +19,9 @@ export default {
       const formattedTickets = ticketsThatNeedAddedToHubspot.map(
         (ticket) => <SimplePublicObjectInputForCreate>(<unknown>{
             properties: {
-              subject: ticket.properties.Name.title[0] ? ticket.properties.Name.title[0].plain_text : 'No title',
+              subject: ticket.properties.Name.title[0]
+                ? `[${`${ticket.properties.ID.unique_id.prefix}-${ticket.properties.ID.unique_id.number}`}] ${ticket.properties.Name.title[0].plain_text}`
+                : 'No title',
               content: ticket.url,
               hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
               hs_pipeline_stage: ticket.properties.Status.status
