@@ -52,6 +52,9 @@ export default {
                 name: ticket.properties.development_type ?? 'Type not found',
               },
             },
+            'Hubspot Ticket ID': {
+              number: Number(ticket.id),
+            },
           },
         });
       }
