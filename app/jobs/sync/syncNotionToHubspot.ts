@@ -7,7 +7,7 @@ import notionUtils from 'utils/notion-utils.ts';
 
 export default {
   name: JobName.SYNC_NOTION_TO_HUBSPOT,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, max-statements
   async process(): Promise<void> {
     try {
       log.info('Syncing Notion to Hubspot...');
@@ -58,24 +58,44 @@ export default {
 
       const ticketsThatNeedUpdatedInHubspot = notionPages.filter((page) => page.properties['Hubspot Ticket ID'].number);
 
+      const tickets = [];
+      const assignees: Array<{ notionUserId: string; hubspotUserId: number }> = [];
       for (const ticket of ticketsThatNeedUpdatedInHubspot) {
         const userPageId = ticket.properties.Assignee.relation[0] ? ticket.properties.Assignee.relation[0].id : null;
-        let assignee = null;
+        let assignee = 0;
+
         if (userPageId) {
-          assignee = await notionUtils.user(userPageId).then((user) => user['Hubspot ID'].number);
+          const cachedAssignee = assignees.find((a) => a.notionUserId === userPageId);
+          if (cachedAssignee) {
+            assignee = cachedAssignee.hubspotUserId;
+          } else {
+            assignee = await notionUtils.user(userPageId).then((user) => user['Hubspot ID'].number);
+            assignees.push({ notionUserId: userPageId, hubspotUserId: assignee });
+          }
         }
 
-        await hubspotUtils.updateTicket(String(ticket.properties['Hubspot Ticket ID'].number), {
-          subject: ticket.properties.Name.title[0] ? ticket.properties.Name.title[0].plain_text : 'No title',
-          content: ticket.url,
-          hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
-          hs_pipeline_stage: ticket.properties.Status.status
-            ? TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name]
-            : TicketStatus.Drafts,
-          development_priority: ticket.properties.Priority.select ? ticket.properties.Priority.select.name : 'Normal',
-          development_type: ticket.properties.Type.select ? ticket.properties.Type.select.name : 'Other',
-          hubspot_owner_id: assignee ? String(assignee) : undefined,
+        tickets.push({
+          id: String(ticket.properties['Hubspot Ticket ID'].number),
+          properties: {
+            subject: ticket.properties.Name.title[0] ? ticket.properties.Name.title[0].plain_text : 'No title',
+            content: ticket.url,
+            hs_pipeline: Bun.env.HUBSPOT_PIPELINE_ID,
+            hs_pipeline_stage: ticket.properties.Status.status
+              ? TicketStatus[<keyof typeof TicketStatus>ticket.properties.Status.status.name]
+              : TicketStatus.Drafts,
+            development_priority: ticket.properties.Priority.select ? ticket.properties.Priority.select.name : 'Normal',
+            development_type: ticket.properties.Type.select ? ticket.properties.Type.select.name : 'Other',
+            hubspot_owner_id: assignee ? String(assignee) : undefined,
+          },
         });
+      }
+
+      /**
+       * Hubspot only allows 100 updates at a time, so we need to split them into chunks
+       */
+      const chunkSize = 100;
+      for (let i = 0; i < tickets.length; i += chunkSize) {
+        await hubspotUtils.updateTicket(tickets.slice(i, i + chunkSize));
       }
 
       log.info(`${notionPages.length} hubspot tickets updated`);

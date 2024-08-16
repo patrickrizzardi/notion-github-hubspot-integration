@@ -25,7 +25,7 @@ interface Page {
     };
     Status: {
       status?: {
-        name: 'Backlog' | 'Closed' | 'Drafts' | 'Icebox' | 'In Progress' | 'Missing Information' | 'Open' | 'Testing';
+        name: 'Backlog' | 'Closed' | 'Drafts' | 'Icebox' | 'In Progress' | 'Missing Information' | 'Needs Testing' | 'Open' | 'Testing Complete';
       };
     };
     Priority: {
@@ -131,6 +131,12 @@ export default {
   pages: async (): Promise<Array<Page>> => {
     let res = await notion.databases.query({
       database_id: Bun.env.NOTION_DATABASE_ID,
+      // filter: {
+      //   property: 'Last Edited Time',
+      //   date: {
+      //     past_month: {},
+      //   },
+      // },
     });
     let pages = res.results;
 
