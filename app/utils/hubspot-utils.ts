@@ -11,9 +11,8 @@ export enum TicketStatus {
   Backlog = '177434689',
   'In Progress' = '177434690',
   Testing = '177434697',
-  'Missing Information' = '177434698',
+  'Testing Complete' = '177434698',
   Closed = '177434691',
-  Icebox = '177434699',
 }
 
 const hubspot = new Client({ accessToken: Bun.env.HUBSPOT_ACCESS_TOKEN });
