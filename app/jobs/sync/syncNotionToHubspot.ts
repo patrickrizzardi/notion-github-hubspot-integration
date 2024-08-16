@@ -5,7 +5,7 @@ import hubspotUtils, { TicketStatus } from 'utils/hubspot-utils.ts';
 import log from 'utils/log-utils.ts';
 import notionUtils from 'utils/notion-utils.ts';
 
-export const temp = {
+export default {
   name: JobName.SYNC_NOTION_TO_HUBSPOT,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, max-statements
   async process(): Promise<void> {
