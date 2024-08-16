@@ -10,7 +10,7 @@ export enum TicketStatus {
   Drafts = '177434688',
   Backlog = '177434689',
   'In Progress' = '177434690',
-  Testing = '177434697',
+  'Needs Testing' = '177434697',
   'Testing Complete' = '177434698',
   Closed = '177434691',
 }
@@ -56,7 +56,7 @@ export default {
   createTickets: async (
     tickets: Array<SimplePublicObjectInputForCreate>,
   ): Promise<BatchResponseSimplePublicObject | BatchResponseSimplePublicObjectWithErrors> => hubspot.crm.tickets.batchApi.create({ inputs: tickets }),
-  updateTicket: async (ticketId: string, ticket: Record<string, any>): Promise<void> => {
-    await hubspot.crm.tickets.batchApi.update({ inputs: [{ id: ticketId, properties: ticket }] });
+  updateTicket: async (tickets: Array<{ id: string; properties: Record<string, any> }>): Promise<void> => {
+    await hubspot.crm.tickets.batchApi.update({ inputs: tickets });
   },
 };

@@ -131,6 +131,12 @@ export default {
   pages: async (): Promise<Array<Page>> => {
     let res = await notion.databases.query({
       database_id: Bun.env.NOTION_DATABASE_ID,
+      // filter: {
+      //   property: 'Last Edited Time',
+      //   date: {
+      //     past_month: {},
+      //   },
+      // },
     });
     let pages = res.results;
 
