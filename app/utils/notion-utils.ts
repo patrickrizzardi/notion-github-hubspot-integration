@@ -25,12 +25,12 @@ interface Page {
     };
     Status: {
       status?: {
-        name: 'Backlog' | 'Closed' | 'Drafts' | 'Icebox' | 'In Progress' | 'Missing Information' | 'Needs Testing' | 'Open' | 'Testing Complete';
+        name: 'Backlog' | 'Closed' | 'Drafts' | 'In Progress' | 'Needs Testing' | 'Open' | 'Testing Complete';
       };
     };
     Priority: {
       select?: {
-        name: 'Critical' | 'High' | 'Low' | 'Normal';
+        name: 'Critical' | 'Future' | 'High' | 'Low' | 'Normal';
       };
     };
     Type: {
