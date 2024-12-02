@@ -7,6 +7,7 @@ import type {
 } from '@hubspot/api-client/lib/codegen/crm/companies/index.js';
 
 export enum TicketStatus {
+  'Things to Discuss' = '261323649',
   Drafts = '177434688',
   Backlog = '177434689',
   'In Progress' = '177434690',
