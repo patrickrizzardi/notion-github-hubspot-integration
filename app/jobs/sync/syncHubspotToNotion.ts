@@ -24,6 +24,7 @@ export default {
       for (const ticket of ticketsThatNeedAddedToNotion) {
         await notionUtils.create({
           parent: {
+            /* eslint-disable-next-line camelcase */
             database_id: Bun.env.NOTION_DATABASE_ID,
             type: 'database_id',
           },
@@ -39,7 +40,9 @@ export default {
             },
             Status: {
               status: {
-                name: Object.entries(TicketStatus).find(([, value]) => value === ticket.properties.hs_pipeline_stage)?.[0] ?? 'Status not found',
+                name:
+                  Object.entries(TicketStatus).find(([, value]) => value === ticket.properties.hs_pipeline_stage)?.[0] ??
+                  'Status not found',
               },
             },
             Priority: {

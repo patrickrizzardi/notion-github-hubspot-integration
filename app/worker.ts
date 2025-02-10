@@ -73,11 +73,9 @@ const eventListeners = {
   stalled: (job: Bull.Job): void => {
     log.warn(`Job ${job.id} stalled`);
   },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   failed: (job: Bull.Job, error: any): void => {
     log.error(`Job ${job.id} failed with error ${error.message}`, error);
   },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: (error: any): void => {
     log.error(`Queue error ${error.message}`, error);
   },
@@ -87,17 +85,16 @@ const eventListeners = {
   },
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const queuesObject = (): Array<{ queue: Bull.Queue; name: string; action: any }> => {
   const queues = [];
   for (const job of jobs) {
-    const queue = new Bull(job.name, <BullOptions>{
+    const queue = new Bull(job.name, {
       redis,
       prefix: job.name,
       settings: {
         maxStalledCount: 3,
       },
-    });
+    } as BullOptions);
     queues.push({ queue, name: job.name, action: job.process });
   }
 

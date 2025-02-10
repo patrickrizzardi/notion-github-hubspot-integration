@@ -5,6 +5,7 @@ import type {
   BatchResponseSimplePublicObjectWithErrors,
   SimplePublicObjectInputForCreate,
 } from '@hubspot/api-client/lib/codegen/crm/companies/index.js';
+import log from 'utils/log-utils.ts';
 
 export enum TicketStatus {
   'Things to Discuss' = '261323649',
@@ -56,8 +57,13 @@ export default {
   },
   createTickets: async (
     tickets: Array<SimplePublicObjectInputForCreate>,
-  ): Promise<BatchResponseSimplePublicObject | BatchResponseSimplePublicObjectWithErrors> => hubspot.crm.tickets.batchApi.create({ inputs: tickets }),
+  ): Promise<BatchResponseSimplePublicObject | BatchResponseSimplePublicObjectWithErrors> =>
+    hubspot.crm.tickets.batchApi.create({ inputs: tickets }),
   updateTicket: async (tickets: Array<{ id: string; properties: Record<string, any> }>): Promise<void> => {
-    await hubspot.crm.tickets.batchApi.update({ inputs: tickets });
+    try {
+      await hubspot.crm.tickets.batchApi.update({ inputs: tickets });
+    } catch (error) {
+      log.error('Error updating tickets', { tickets, error });
+    }
   },
 };

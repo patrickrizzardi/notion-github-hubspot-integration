@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
-/* eslint-disable max-lines */
+
 export { cronUtil };
 
 type DayOfMonth =
@@ -208,7 +208,7 @@ class CronHelper implements CronUtilInterface {
    */
   everyDay = async (time?: `${Hours}:${Minutes}`): Promise<string> => {
     let expression = '0 0 * * *';
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -220,7 +220,7 @@ class CronHelper implements CronUtilInterface {
    */
   everySunday = async (time?: `${Hours}:${Minutes}`): Promise<string> => {
     let expression = '0 0 * * 0';
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -232,7 +232,7 @@ class CronHelper implements CronUtilInterface {
    */
   everyMonday = async (time?: `${Hours}:${Minutes}`): Promise<string> => {
     let expression = '0 0 * * 1';
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -244,7 +244,7 @@ class CronHelper implements CronUtilInterface {
    */
   everyTuesday = async (time?: `${Hours}:${Minutes}`): Promise<string> => {
     let expression = '0 0 * * 2';
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -256,7 +256,7 @@ class CronHelper implements CronUtilInterface {
    */
   everyWednesday = async (time?: `${Hours}:${Minutes}`): Promise<string> => {
     let expression = '0 0 * * 3';
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -268,7 +268,7 @@ class CronHelper implements CronUtilInterface {
    */
   everyThursday = async (time?: `${Hours}:${Minutes}`): Promise<string> => {
     let expression = '0 0 * * 4';
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -280,7 +280,7 @@ class CronHelper implements CronUtilInterface {
    */
   everyFriday = async (time?: `${Hours}:${Minutes}`): Promise<string> => {
     let expression = '0 0 * * 5';
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -291,7 +291,7 @@ class CronHelper implements CronUtilInterface {
    */
   everySaturday = async (time?: `${Hours}:${Minutes}`): Promise<string> => {
     let expression = '0 0 * * 6';
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -302,7 +302,7 @@ class CronHelper implements CronUtilInterface {
    */
   everyWeekday = async (time?: `${Hours}:${Minutes}`): Promise<string> => {
     let expression = '0 0 * * 1-5';
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -314,8 +314,8 @@ class CronHelper implements CronUtilInterface {
    */
   everyMonth = async ({ time, dayOfMonth }: { time?: `${Hours}:${Minutes}`; dayOfMonth?: DayOfMonth }): Promise<string> => {
     let expression = '0 0 1 * *';
-    if (dayOfMonth) expression = this._handleDayOfMonth(expression, dayOfMonth); // eslint-disable-line
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (dayOfMonth) expression = this._handleDayOfMonth(expression, dayOfMonth);
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -329,8 +329,8 @@ class CronHelper implements CronUtilInterface {
     dayOfMonth?: DayOfMonth;
   }): Promise<string> => {
     let expression = '0 0 1 * *';
-    if (dayOfMonth) expression = this._handleDayOfMonth(expression, dayOfMonth); // eslint-disable-line
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (dayOfMonth) expression = this._handleDayOfMonth(expression, dayOfMonth);
+    if (time) expression = this._handleTime(expression, time);
     if (months) expression = this._handleMonths(expression, months); // eslint-disable-line
     return this._convertToUtc(expression);
   };
@@ -343,8 +343,8 @@ class CronHelper implements CronUtilInterface {
    */
   everyQuarter = async ({ time, dayOfMonth }: { time?: `${Hours}:${Minutes}`; dayOfMonth?: DayOfMonth }): Promise<string> => {
     let expression = '0 0 1 1,4,7,10 *';
-    if (dayOfMonth) expression = this._handleDayOfMonth(expression, dayOfMonth); // eslint-disable-line
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (dayOfMonth) expression = this._handleDayOfMonth(expression, dayOfMonth);
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -355,11 +355,19 @@ class CronHelper implements CronUtilInterface {
    * @param {string} month - '04' (April) or 'apr' (April) or 'april' (April)
    * @param {string} day - '24' (24th day of the month)
    */
-  everyYear = async ({ time, month, day }: { time?: `${Hours}:${Minutes}`; month?: Month | MonthNum; day?: DayOfMonth }): Promise<string> => {
+  everyYear = async ({
+    time,
+    month,
+    day,
+  }: {
+    time?: `${Hours}:${Minutes}`;
+    month?: Month | MonthNum;
+    day?: DayOfMonth;
+  }): Promise<string> => {
     let expression = '0 0 1 1 *';
-    if (month) expression = this._handleMonth(expression, month); // eslint-disable-line
-    if (day) expression = this._handleDayOfMonth(expression, day); // eslint-disable-line
-    if (time) expression = this._handleTime(expression, time); // eslint-disable-line
+    if (month) expression = this._handleMonth(expression, month);
+    if (day) expression = this._handleDayOfMonth(expression, day);
+    if (time) expression = this._handleTime(expression, time);
     return this._convertToUtc(expression);
   };
 
@@ -371,8 +379,8 @@ class CronHelper implements CronUtilInterface {
   at = async ({ date, time }: { date: `${Month}:${DayOfMonth}`; time: `${Hours}:${Minutes}` }): Promise<string> => {
     let expression = '0 0 * * *';
     const [month, day] = date.split(':');
-    expression = this._handleMonth(expression, month as Month | MonthNum); // eslint-disable-line
-    expression = this._handleDayOfMonth(expression, day as DayOfMonth); // eslint-disable-line
+    expression = this._handleMonth(expression, month as Month | MonthNum);
+    expression = this._handleDayOfMonth(expression, day as DayOfMonth);
     if (time) expression = this._handleTime(expression, time); // eslint-disable-line
     return this._convertToUtc(expression);
   };
@@ -414,8 +422,9 @@ class CronHelper implements CronUtilInterface {
       /**
        * If the day of the month is less than 10, we need to add a 0 to the front
        */
-      if (month.length > 2) monthsArray.push(Month[month.toLowerCase() as keyof typeof Month]); // eslint-disable-line
-      else monthsArray.push(month as MonthNum); // eslint-disable-line
+      if (month.length > 2)
+        monthsArray.push(Month[month.toLowerCase() as keyof typeof Month]); // eslint-disable-line
+      else monthsArray.push(month as MonthNum);
     }
 
     const [originalMinutes, originalHours, originalDayOfMonth, _originalMonth, originalDayOfWeek] = expression.split(' ');
@@ -428,8 +437,7 @@ class CronHelper implements CronUtilInterface {
        * We use the api so it can be dynamic specifically daylight savings time
        */
       const timezone = await fetch(`https://worldtimeapi.org/api/timezone/${this.localTimezone}`).then(
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        async (res) => <{ utc_offset: string }>await res.json(),
+        async (res) => (await res.json()) as { utc_offset: string },
       );
       /**
        * Sometimes this api might go down (It's a free public api)
@@ -446,7 +454,7 @@ class CronHelper implements CronUtilInterface {
        */
 
       return (Number(timezone.utc_offset.split(':')[0]) * -1).toString();
-    } catch (err) {
+    } catch (_err) {
       return '5';
     }
   };
