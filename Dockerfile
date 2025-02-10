@@ -2,15 +2,15 @@
 # * -------------------- Base --------------------
 # * Use `target base` if you are using docker compose locally
 FROM oven/bun AS base
-ENV USER bun
-ENV WORKDIR /usr/src/app
+ENV USER=bun
+ENV WORKDIR=/usr/src/app
 WORKDIR ${WORKDIR}
 
 USER ${USER}
 CMD [ "bun", "start" ]
 
 # * -------------------- Install Development --------------------
-FROM base AS devInstall
+FROM base AS dev-install
 
 # Set the user to root to avoid permission issues
 USER root
@@ -24,7 +24,7 @@ RUN cd /temp/dev && bun install --frozen-lockfile
 
 # * -------------------- Install Prod --------------------
 # Production and development installations are being separated to save time in the CI/CD pipeline during linting and testing, as production dependencies are not required for these steps
-FROM base AS prodInstall
+FROM base AS prod-install
 
 # Set the user to root to avoid permission issues
 USER root
@@ -43,7 +43,7 @@ WORKDIR ${WORKDIR}
 # Set the user to root to avoid permission issues
 USER root
 
-COPY --from=devInstall /temp/dev/node_modules ./node_modules
+COPY --from=dev-install /temp/dev/node_modules ./node_modules
 COPY  . .
 
 RUN bun run build
@@ -56,7 +56,7 @@ ENV NODE_ENV=production
 # Set the user to root to avoid permission issues
 USER root
 
-COPY --from=prodInstall /temp/prod/node_modules ./node_modules
+COPY --from=prod-install /temp/prod/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./
 COPY --chmod=700 --from=build /usr/src/app/entrypoint.sh ./entrypoint.sh
 
