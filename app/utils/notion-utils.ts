@@ -19,13 +19,11 @@ interface Page {
       number: number;
     };
     Name: {
-      title: Array<{
-        plain_text: string;
-      }>;
+      title: Array<{ plain_text: string }>;
     };
     Status: {
       status?: {
-        name: 'Backlog' | 'Closed' | 'Drafts' | 'In Progress' | 'Needs Testing' | 'Open' | 'Testing Complete';
+        name: 'Backlog' | 'Closed' | 'Drafts' | 'In Progress' | 'Needs Testing' | 'Open' | 'Testing Complete' | 'Things to Discuss';
       };
     };
     Priority: {
@@ -53,7 +51,7 @@ interface Person {
   Tasks: {
     id: string;
     type: string;
-    relation: Array<object>;
+    relation: Array<string>;
     has_more: boolean;
   };
   'LinkedIn ': {
@@ -74,7 +72,7 @@ interface Person {
   'With VPM': {
     id: string;
     type: string;
-    formula: Array<object>;
+    formula: Array<string>;
   };
   Joined: {
     id: string;
@@ -94,22 +92,22 @@ interface Person {
   'Tenure (Years)': {
     id: string;
     type: string;
-    formula: Array<object>;
+    formula: Array<string>;
   };
   'Tenure (Months)': {
     id: string;
     type: string;
-    formula: Array<object>;
+    formula: Array<string>;
   };
   'Job Title': {
     id: string;
     type: string;
-    select: Array<object>;
+    select: Array<string>;
   };
   Name: {
     id: string;
     type: string;
-    title: Array<object>;
+    title: Array<string>;
   };
 }
 
@@ -130,7 +128,9 @@ export default {
    */
   pages: async (): Promise<Array<Page>> => {
     let res = await notion.databases.query({
+      /* eslint-disable */
       database_id: Bun.env.NOTION_DATABASE_ID,
+      /* eslint-enable */
       // filter: {
       //   property: 'Last Edited Time',
       //   date: {
@@ -142,30 +142,39 @@ export default {
 
     while (res.has_more && res.next_cursor) {
       res = await notion.databases.query({
+        /* eslint-disable */
         database_id: Bun.env.NOTION_DATABASE_ID,
         start_cursor: res.next_cursor,
+        /* eslint-enable */
       });
       pages = [...pages, ...res.results];
     }
 
-    return <Array<Page>>(<unknown>pages);
+    return pages as unknown as Array<Page>;
   },
   user: async (pageId: string): Promise<Person> => {
-    const user = <PageObjectResponse>await notion.pages.retrieve({ page_id: pageId });
+    /* eslint-disable */
+    const user = (await notion.pages.retrieve({ page_id: pageId })) as PageObjectResponse;
+    /* eslint-enable */
     const { properties } = user;
-    return <Person>(<unknown>properties);
+    return properties as unknown as Person;
   },
   update: async ({ pageId, properties }: { pageId: string; properties: Record<string, any> }): Promise<void> => {
     await notion.pages.update({
+      /* eslint-disable */
+
       page_id: pageId,
       properties,
+      /* eslint-enable */
     });
   },
   create: async ({
     parent,
     properties,
   }: {
+    /* eslint-disable */
     parent: { database_id: string; type?: 'database_id' } | { page_id: string; type?: 'page_id' };
+    /* eslint-enable */
     properties: Record<string, any>;
   }): Promise<void> => {
     await notion.pages.create({

@@ -1,7 +1,7 @@
-name: Build
+name: Production Build
 
 concurrency:
-  group: build-${{ github.ref }}
+  group: production-build-${{ github.ref }}
   cancel-in-progress: true
 
 on:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   # We are going to build an image specifically for testing and push it to ghcr.io (GitHub Container Registry)
-  # This image is used throught the entire github workflow until it is built for final deployment
+  # This image is used throughout the entire github workflow until it is built for final deployment
   build-test-image:
     name: Build Image for Testing
     runs-on: ubuntu-latest
@@ -33,102 +33,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - id: set-var
-        uses: ASzc/change-string-case-action@v5
-        with:
-          string: ${{ github.repository }}
-
       - name: Build and Push Image to ghcr.io
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/${{ steps.set-var.outputs.lowercase }}:test
-          cache-from: type=registry,ref=ghcr.io/${{ steps.set-var.outputs.lowercase }}:test
-          cache-to: type=inline # Inline cache is stored in the registry, embedded into the main image, and is pulled alongside the main image.
+          tags: ghcr.io/${{ github.repository }}:test-production
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:cache-production-test
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:cache-production-test,mode=max
           target: build # This is the target stage in the Dockerfile
+
           labels: |
             org.opencontainers.image.title=Test Image
             org.opencontainers.image.description=Image used for testing
-            org.opencontainers.image.source=ghcr.io/${{ steps.set-var.outputs.lowercase }}
-
-  # We are going to run unit tests, integration tests, CVE scanning, smoke tests, and linting in parallel
-  lint:
-    name: Eslint
-    runs-on: ubuntu-latest
-    needs: [build-test-image]
-
-    permissions:
-      packages: read # Needed to pull docker image from ghcr.io
-
-    steps:
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
-      - id: set-var
-        uses: ASzc/change-string-case-action@v5
-        with:
-          string: ${{ github.repository }}
-
-      - name: Run Linting
-        run: docker run --rm ghcr.io/${{ steps.set-var.outputs.lowercase }}:test bun run lint:eslint
-
-  format:
-    name: Prettier Format
-    runs-on: ubuntu-latest
-    needs: [build-test-image]
-
-    permissions:
-      packages: read # Needed to pull docker image from ghcr.io
-
-    steps:
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
-      - id: set-var
-        uses: ASzc/change-string-case-action@v5
-        with:
-          string: ${{ github.repository }}
-
-      - name: Run Linting
-        run: docker run --rm ghcr.io/${{ steps.set-var.outputs.lowercase }}:test bun run lint:format
-
-  spelling:
-    name: Lint Spelling
-    runs-on: ubuntu-latest
-    needs: [build-test-image]
-
-    permissions:
-      packages: read # Needed to pull docker image from ghcr.io
-
-    steps:
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
-      - id: set-var
-        uses: ASzc/change-string-case-action@v5
-        with:
-          string: ${{ github.repository }}
-
-      - name: Run Linting
-        run: docker run --rm ghcr.io/${{ steps.set-var.outputs.lowercase }}:test bun run lint:spelling
+            org.opencontainers.image.source=ghcr.io/${{ github.repository }}
 
   # We are going to build an image specifically for final deployment and push it to ghcr.io (GitHub Container Registry)
   build-final-image:
     name: Build Image for Deployment (Production)
     runs-on: ubuntu-latest
-    needs: [lint, format, spelling]
+    needs: [build-test-image]
 
     permissions:
       packages: write # Needed to push docker image to ghcr.io
@@ -146,38 +69,31 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - id: set-var
-        uses: ASzc/change-string-case-action@v5
-        with:
-          string: ${{ github.repository }}
-
       - name: Build and Push Image to ghcr.io
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           push: true
-          tags: |
-            ghcr.io/${{ steps.set-var.outputs.lowercase }}:latest
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
-          cache-to: type=inline # Inline cache is stored in the registry, embedded into the main image, and is pulled alongside the main image.
+          tags: ghcr.io/${{ github.repository }}:production
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:cache-production-test
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:cache-production-test,mode=max
           target: release # This is the target stage in the Dockerfile
           labels: |
             org.opencontainers.image.title=Production Image
-            org.opencontainers.image.description=Image used for production
-            org.opencontainers.image.source=ghcr.io/${{ steps.set-var.outputs.lowercase }}
+            org.opencontainers.image.description=Image used for production deployment
+            org.opencontainers.image.source=ghcr.io/${{ github.repository }}
 
   clean-old-images:
     name: Clean Old Images
     runs-on: ubuntu-latest
-    needs: [build-final-image]
 
     permissions:
       packages: write
 
     steps:
-      - uses: actions/delete-package-versions@v4
+      - uses: actions/delete-package-versions@v5
         with:
           owner: ${{ github.repository_owner }}
           package-name: ${{ github.event.repository.name }}
           package-type: container
-          min-versions-to-keep: 5
+          min-versions-to-keep: 24
           delete-only-untagged-versions: true

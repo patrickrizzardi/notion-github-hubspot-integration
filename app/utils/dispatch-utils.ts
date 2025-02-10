@@ -25,7 +25,7 @@ const dispatch = async (name: JobName, data: Record<string, unknown>, opts: Bull
   });
 
   // Add the job to the queue in redis
-  await queue.add(data, <BullJobOptions>{
+  await queue.add(data, {
     priority: opts.priority,
     attempts: opts.attempts ?? 1,
     timeout: opts.timeout ?? convertTime('5m'),
@@ -36,7 +36,7 @@ const dispatch = async (name: JobName, data: Record<string, unknown>, opts: Bull
       age: convertTime('1d'),
       count: 100,
     },
-  });
+  } as BullJobOptions);
 
   return queue.close();
 };

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import worker from 'root/worker.ts';
 import log from 'utils/log-utils.ts';
 // import { createGithubIssueFromNotion } from 'root/createGithubIssueFromNotion.ts';

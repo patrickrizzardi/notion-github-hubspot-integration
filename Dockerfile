@@ -1,7 +1,7 @@
 # https://bun.sh/guides/ecosystem/docker
 # * -------------------- Base --------------------
 # * Use `target base` if you are using docker compose locally
-FROM oven/bun as base
+FROM oven/bun AS base
 ENV USER bun
 ENV WORKDIR /usr/src/app
 WORKDIR ${WORKDIR}
@@ -10,7 +10,7 @@ USER ${USER}
 CMD [ "bun", "start" ]
 
 # * -------------------- Install Development --------------------
-FROM base as devInstall
+FROM base AS devInstall
 
 # Set the user to root to avoid permission issues
 USER root
@@ -24,7 +24,7 @@ RUN cd /temp/dev && bun install --frozen-lockfile
 
 # * -------------------- Install Prod --------------------
 # Production and development installations are being separated to save time in the CI/CD pipeline during linting and testing, as production dependencies are not required for these steps
-FROM base as prodInstall
+FROM base AS prodInstall
 
 # Set the user to root to avoid permission issues
 USER root
@@ -37,7 +37,7 @@ RUN cd /temp/prod && bun install --production --frozen-lockfile
 
 # * -------------------- Build --------------------
 # Copy node modules from the temp directory to the build directory
-FROM base as build
+FROM base AS build
 WORKDIR ${WORKDIR}
 
 # Set the user to root to avoid permission issues
@@ -50,7 +50,7 @@ RUN bun run build
 
 # * -------------------- Release --------------------
 # * Use `target release` if you are using for production
-FROM base as release
+FROM base AS release
 ENV NODE_ENV=production
 
 # Set the user to root to avoid permission issues
