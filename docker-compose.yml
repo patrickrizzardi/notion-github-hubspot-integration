@@ -6,13 +6,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: base
+      target: release
     image: notion-github-integration
     restart: unless-stopped
-    volumes:
-      - ./:/usr/src/app
+    # volumes:
+    # - ./:/usr/src/app
     networks:
       - default
+    env_file:
+      - .env
 
   redis:
     image: redis:alpine
