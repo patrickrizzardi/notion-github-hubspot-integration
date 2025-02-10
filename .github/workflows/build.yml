@@ -73,9 +73,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/${{ github.repository }}:production
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:cache-production-test
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:cache-production-test,mode=max
+          tags: ghcr.io/${{ github.repository }}:latest
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:latest,mode=max
           target: release # This is the target stage in the Dockerfile
           labels: |
             org.opencontainers.image.title=Production Image
