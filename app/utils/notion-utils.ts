@@ -23,7 +23,16 @@ interface Page {
     };
     Status: {
       status?: {
-        name: 'Backlog' | 'Closed' | 'Drafts' | 'In Progress' | 'Needs Testing' | 'Open' | 'Testing Complete' | 'Things to Discuss';
+        name:
+          | 'Backlog'
+          | 'Closed'
+          | 'Drafts'
+          | 'In Progress'
+          | 'Needs Testing'
+          | 'Open'
+          | 'Ready For Code Review'
+          | 'Testing Complete'
+          | 'Things to Discuss';
       };
     };
     Priority: {
