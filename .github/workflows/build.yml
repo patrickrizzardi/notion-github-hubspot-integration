@@ -84,19 +84,19 @@ jobs:
             org.opencontainers.image.description=Image used for production deployment
             org.opencontainers.image.source=ghcr.io/${{ github.repository }}
 
-  # clean-old-images:
-  #   name: Clean Old Images
-  #   runs-on: ubuntu-latest
+  clean-old-images:
+    name: Clean Old Images
+    runs-on: ubuntu-latest
 
-  #   permissions:
-  #     packages: write
+    permissions:
+      packages: write
 
-  #   steps:
-  #     - uses: actions/delete-package-versions@v5
-  #       with:
-  #         owner: ${{ github.repository_owner }}
-  #         package-name: ${{ github.event.repository.name }}
-  #         package-type: container
-  #         min-versions-to-keep: 24
-  #         delete-only-untagged-versions: true
+    steps:
+      - uses: actions/delete-package-versions@v5
+        with:
+          owner: ${{ github.repository_owner }}
+          package-name: ${{ github.event.repository.name }}
+          package-type: container
+          min-versions-to-keep: 24
+          delete-only-untagged-versions: true
 

@@ -15,6 +15,7 @@ export enum TicketStatus {
   'Needs Testing' = '177434697',
   'Testing Complete' = '177434698',
   Closed = '177434691',
+  'Ready For Code Review' = '1035352894',
 }
 
 const hubspot = new Client({ accessToken: Bun.env.HUBSPOT_ACCESS_TOKEN });
